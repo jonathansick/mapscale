@@ -13,10 +13,11 @@ def main():
     myfunc = WorkFunction()
     mapper = Processor(myfunc, 1)
     time.sleep(2.)
+    
+    jobList = range(5)
+    results = mapper(jobList)
+    print results
     mapper.shutdown()
-    # jobList = range(5)
-    # results = mapper(jobList)
-    # print results
 
 
 class WorkFunction(object):

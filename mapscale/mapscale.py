@@ -53,7 +53,7 @@ class Processor(object):
 
         # Socket for getting results from the receiver
         self.bundlerSocket = self.context.socket(zmq.REP)
-        self.bundlerSocket.connect(mktcp("127.0.0.1", self.bundlerPort))
+        self.bundlerSocket.bind(mktcp("127.0.0.1", self.bundlerPort))
 
         # Setup receiver
         resultCollector = Process(target=result_collector,
@@ -99,7 +99,8 @@ class Processor(object):
         # Tell the receiver to expect new jobs
         self.wakeReceiverSocket.send_pyobj(nJobs)
         # receiver tells us its ready
-        msg = self.coordinatorSocket.recv()
+        msg = self.wakeReceiverSocket.recv()
+        print msg
 
         # messages consist of (int, job_object)
         for message in enumerate(jobList):
@@ -107,8 +108,12 @@ class Processor(object):
 
         # Receive result bundle from collector
         # Blocks until the resutls are transmitted
+        print "__call__ waiting for results"
         results = self.bundlerSocket.recv_pyobj()
+        print "__call__ got results"
+        print results
         self.bundlerSocket.send("THANKS")
+        print "__call__ sends thanks"
 
         # Re-order results
         # jobIDs = [r[0] for r in results]
@@ -213,9 +218,15 @@ def result_collector(collectorPort, wakePort, bundlerPort):
         for i in xrange(nJobs):
             resultMessage = collector.recv_pyobj()
             results.append(resultMessage)
+        
+        print "result_collector results:"
+        print results
 
         bundlerSocket.send_pyobj(results)
+        print "result_collector send results back"
         msg = bundlerSocket.recv()
+        print "result_collector got reply"
+        print msg
 
 
 def main():
