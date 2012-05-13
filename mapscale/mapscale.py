@@ -56,11 +56,11 @@ class Processor(object):
         self.bundlerSocket.connect(mktcp("127.0.0.1", self.bundlerPort))
 
         # Setup receiver
-        # resultCollector = Process(target=result_collector,
-                                  # args=(self.collectorPort,
-                                        # self.wakeReceiverSocket,
-                                        # self.bundlerSocket))
-        # resultCollector.start()
+        resultCollector = Process(target=result_collector,
+                                  args=(self.collectorPort,
+                                        self.wakePort,
+                                        self.bundlerPort))
+        resultCollector.start()
 
     def add_remote_workers(self, host, port, nWorkers):
         """Adds workers on a remote machine; these are in addition to any
@@ -188,7 +188,8 @@ def result_collector(collectorPort, wakePort, bundlerPort):
 
     # Socket to receive wake signals with number of jobs to expect
     wakeSocket = context.socket(zmq.REP)
-    wakeSocket.bind(mktcp("*", wakePort))
+    print mktcp("127.0.0.1", wakePort)
+    wakeSocket.bind(mktcp("127.0.0.1", wakePort))
 
     # Socket to send result list back
     bundlerSocket = context.socket(zmq.REQ)
