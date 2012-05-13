@@ -31,9 +31,14 @@ class Processor(object):
                     args=(lnpostfn, "localhost", self.ventPort,
                           self.collectorPort, self.controlPort))
 
-        # Create socket for sending jobs to workers
         mktcp = lambda ip, port: "tcp://%s:%s" % (ip, port)
         self.context = zmq.Context()
+
+        # Socket for controlling workers (ie shutdown)
+        self.controlSocket = self.context.socket(zmq.PUB)
+        self.controlSocket.bind(mktcp("localhost", self.controlPort))
+
+        # Create socket for sending jobs to workers
         self.ventSocket = self.context.socket(zmq.PUSH)
         self.ventSocket.bind(mktcp("localhost", self.ventPort))
 
@@ -65,13 +70,17 @@ class Processor(object):
         """
         pass
 
+    def shutdown(self):
+        """Send a shutdown message to all work servers."""
+        self.controlSocket.send("QUIT")
+
     def map(self, foo, jobList):
         """Allows `ZMQProcessor` to be used as a drop-in replacement
         for `multiprocessing`'s Pool.map().
         """
         pass
 
-    def run(self, jobList):
+    def __call__(self, jobList):
         """Run jobs across all workers and return results in the same order."""
         nJobs = len(jobList)
 
@@ -94,7 +103,7 @@ class Processor(object):
 
         # Receive result bundle from collector
         # Blocks until the resutls are transmitted
-        results = self.bundlerSocket.recv()
+        results = self.bundlerSocket.recv_pyobj()
         self.bundlerSocket.send("THANKS")
 
         # Re-order results
@@ -184,7 +193,7 @@ def result_collector(collectorPort, wakePort, bundlerPort):
     while True:
         results = []
 
-        nJobs = wakeSocket.recv()
+        nJobs = wakeSocket.recv_pyobj()
         wakeSocket.send("READY")
 
         for i in xrange(nJobs):
