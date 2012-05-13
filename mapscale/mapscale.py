@@ -76,6 +76,7 @@ class Processor(object):
     def shutdown(self):
         """Send a shutdown message to all work servers."""
         self.controlSocket.send("QUIT")
+        self.wakeReceiverSocket.send_pyobj("QUIT")
 
     def map(self, foo, jobList):
         """Allows `ZMQProcessor` to be used as a drop-in replacement
@@ -198,8 +199,16 @@ def result_collector(collectorPort, wakePort, bundlerPort):
     while True:
         results = []
 
-        nJobs = wakeSocket.recv_pyobj()
-        wakeSocket.send("READY")
+        msg = wakeSocket.recv_pyobj()
+
+        if msg == "QUIT":
+            print("result_collector shutting down")
+            wakeSocket.send("result_collector shutting down")
+            break
+        else:
+            nJobs = int(msg)
+            print "collector ready to receive %i jobs" % nJobs
+            wakeSocket.send("READY")
 
         for i in xrange(nJobs):
             resultMessage = collector.recv_pyobj()
