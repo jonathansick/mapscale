@@ -28,29 +28,31 @@ class Processor(object):
         # Create local workers
         for i in range(nWorkers):
             Process(target=worker,
-                    args=(lnpostfn, "localhost", self.ventPort,
+                    args=(lnpostfn, "127.0.0.1", self.ventPort,
                           self.collectorPort, self.controlPort))
 
         mktcp = lambda ip, port: "tcp://%s:%s" % (ip, port)
         self.context = zmq.Context()
+        print self.context
 
         # Socket for controlling workers (ie shutdown)
+        print mktcp("*", self.controlPort)
         self.controlSocket = self.context.socket(zmq.PUB)
-        self.controlSocket.bind(mktcp("localhost", self.controlPort))
+        self.controlSocket.bind(mktcp("127.0.0.1", self.controlPort))
 
         # Create socket for sending jobs to workers
         self.ventSocket = self.context.socket(zmq.PUSH)
-        self.ventSocket.bind(mktcp("localhost", self.ventPort))
+        self.ventSocket.bind(mktcp("127.0.0.1", self.ventPort))
 
         # Socket for telling receiver to start listening for results from
         # N jobs
         # ZMQProcessor acts as a client here; receiver is server
         self.wakeReceiverSocket = self.context.socket(zmq.REQ)
-        self.wakeReceiverSocket.connect(mktcp("localhost", self.wakePort))
+        self.wakeReceiverSocket.connect(mktcp("127.0.0.1", self.wakePort))
 
         # Socket for getting results from the receiver
         self.bundlerSocket = self.context.socket(zmq.REP)
-        self.bundlerSocket.connect(mktcp("localhost", self.bundlerPort))
+        self.bundlerSocket.connect(mktcp("127.0.0.1", self.bundlerPort))
 
         # Setup receiver
         resultCollector = Process(target=result_collector,
@@ -131,6 +133,7 @@ def worker(lnpostfn, clientIP, ventPort, collectorPort, controlPort):
     controlPort : str
         Port that the controller communicates over.
     """
+    print "Booting up worker"
     # TODO check if lnpostfn has setup attribute first
     lnpostfn.setup()  # allow the posterior function to setup environment
 
@@ -180,15 +183,15 @@ def result_collector(collectorPort, wakePort, bundlerPort):
 
     # Socket to receive results from the workers
     collector = context.socket(zmq.PULL)
-    collector.bind(mktcp("localhost", collectorPort))
+    collector.bind(mktcp("127.0.0.1", collectorPort))
 
     # Socket to receive wake signals with number of jobs to expect
     wakeSocket = context.socket(zmq.REP)
-    wakeSocket.bind(mktcp("localhost", wakePort))
+    wakeSocket.bind(mktcp("127.0.0.1", wakePort))
 
     # Socket to send result list back
     bundlerSocket = context.socket(zmq.REQ)
-    bundlerSocket.connect(mktcp("localhost", bundlerPort))
+    bundlerSocket.connect(mktcp("127.0.0.1", bundlerPort))
 
     while True:
         results = []
