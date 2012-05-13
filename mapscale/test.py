@@ -12,6 +12,7 @@ from mapscale import Processor
 def main():
     myfunc = WorkFunction()
     mapper = Processor(myfunc, 1)
+    time.sleep(2.)
     mapper.shutdown()
     # jobList = range(5)
     # results = mapper(jobList)
