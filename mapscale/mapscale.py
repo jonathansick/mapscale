@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
-Enable Zero-MQ in emcee.
+ZeroMQ-based embarassingly parallel processing tool.
 """
 
 import time
@@ -9,10 +9,8 @@ from  multiprocessing import Process
 
 import zmq
 
-from ensemble import Ensemble
 
-
-class ZMQProcessor(object):
+class Processor(object):
     """Client/pool for distributing posterior function calls to workers and
     receiving results.
 
@@ -20,7 +18,7 @@ class ZMQProcessor(object):
     See http://zguide.zeromq.org/page:all#Divide-and-Conquer
     """
     def __init__(self, lnpostfn, nWorkers):
-        super(ZMQProcessor, self).__init__()
+        super(Processor, self).__init__()
         self.lnpostfn = lnpostfn
         self.ventPort = "5557"
         self.collectorPort = "5558"
