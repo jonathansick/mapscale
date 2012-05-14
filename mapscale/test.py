@@ -12,7 +12,7 @@ from mapscale import Processor
 def main():
     myfunc = WorkFunction()
     mapper = Processor(myfunc, 2)
-    time.sleep(2.)
+    # time.sleep(2.)
     
     jobList = range(5)
     results = mapper(jobList)
@@ -27,8 +27,8 @@ class WorkFunction(object):
 
     def __call__(self, x):
         """docstring for __call__"""
-        print x
-        time.sleep(1.)
+        # print x
+        # time.sleep(1.)
         return x ** 2.
 
     def setup(self):
