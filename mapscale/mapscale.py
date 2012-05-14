@@ -88,19 +88,10 @@ class Processor(object):
         """Run jobs across all workers and return results in the same order."""
         nJobs = len(jobList)
 
-        # TODO always start new result collector
-        # or can it be reused?
-        # If I set up a channel to talk between the main thread
-        # and the result collector, I can pass nJobs, and later
-        # ask for the jobs to be sent back
-        # In this case the result collector would be created
-        # upon init
-
         # Tell the receiver to expect new jobs
         self.wakeReceiverSocket.send_pyobj(nJobs)
         # receiver tells us its ready
         msg = self.wakeReceiverSocket.recv()
-        print msg
 
         # messages consist of (int, job_object)
         for message in enumerate(jobList):
@@ -108,17 +99,11 @@ class Processor(object):
 
         # Receive result bundle from collector
         # Blocks until the resutls are transmitted
-        print "__call__ waiting for results"
         results = self.bundlerSocket.recv_pyobj()
-        print "__call__ got results"
-        print results
         self.bundlerSocket.send("THANKS")
-        print "__call__ sends thanks"
 
         # Re-order results
-        # jobIDs = [r[0] for r in results]
-        # values = [r[1] for r in results]
-        jobIDs, values = zip(*results)  # make sure this trick works?
+        jobIDs, values = zip(*results)
         return sorted(values)
 
 
@@ -184,6 +169,7 @@ def worker(lnpostfn, clientIP, ventPort, collectorPort, controlPort):
 
 def result_collector(collectorPort, wakePort, bundlerPort):
     """Receives results from the workers."""
+    print "result_collector booting up"
     context = zmq.Context()
 
     mktcp = lambda ip, port: "tcp://%s:%s" % (ip, port)
@@ -194,7 +180,6 @@ def result_collector(collectorPort, wakePort, bundlerPort):
 
     # Socket to receive wake signals with number of jobs to expect
     wakeSocket = context.socket(zmq.REP)
-    print mktcp("127.0.0.1", wakePort)
     wakeSocket.bind(mktcp("127.0.0.1", wakePort))
 
     # Socket to send result list back
@@ -219,14 +204,9 @@ def result_collector(collectorPort, wakePort, bundlerPort):
             resultMessage = collector.recv_pyobj()
             results.append(resultMessage)
         
-        print "result_collector results:"
-        print results
-
         bundlerSocket.send_pyobj(results)
         print "result_collector send results back"
         msg = bundlerSocket.recv()
-        print "result_collector got reply"
-        print msg
 
 
 def main():
