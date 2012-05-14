@@ -103,8 +103,12 @@ class Processor(object):
         self.bundlerSocket.send("THANKS")
 
         # Re-order results
+        # results is a list of (jobID, value), so that sorting of results
+        # will automatically key on jobID
+        results.sort()
+        # Nifty way to unzip
         jobIDs, values = zip(*results)
-        return sorted(values)
+        return values
 
 
 def worker(lnpostfn, clientIP, ventPort, collectorPort, controlPort):
@@ -197,7 +201,6 @@ def result_collector(collectorPort, wakePort, bundlerPort):
             break
         else:
             nJobs = int(msg)
-            print "collector ready to receive %i jobs" % nJobs
             wakeSocket.send("READY")
 
         for i in xrange(nJobs):
@@ -205,7 +208,6 @@ def result_collector(collectorPort, wakePort, bundlerPort):
             results.append(resultMessage)
         
         bundlerSocket.send_pyobj(results)
-        print "result_collector send results back"
         msg = bundlerSocket.recv()
 
 
