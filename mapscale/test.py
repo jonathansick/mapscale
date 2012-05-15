@@ -17,7 +17,7 @@ def main():
     jobList = range(5)
     results = mapper(jobList)
     print results
-    mapper.shutdown()
+    mapper.shutdown(sleep=1.)
 
 
 class WorkFunction(object):
@@ -40,4 +40,5 @@ class WorkFunction(object):
         print "Cleaning up"
 
 if __name__ == '__main__':
+    main()
     main()

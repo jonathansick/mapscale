@@ -73,10 +73,21 @@ class Processor(object):
         """
         pass
 
-    def shutdown(self):
+    def shutdown(self, sleep=1.):
         """Send a shutdown message to all work servers."""
         self.controlSocket.send("QUIT")
         self.wakeReceiverSocket.send_pyobj("QUIT")
+
+        # time.sleep(sleep)
+        self.controlSocket.setsockopt(zmq.LINGER, 0)
+        self.wakeReceiverSocket.setsockopt(zmq.LINGER, 0)
+        self.bundlerSocket.setsockopt(zmq.LINGER, 0)
+        self.ventSocket.setsockopt(zmq.LINGER, 0)
+        self.controlSocket.close()
+        self.wakeReceiverSocket.close()
+        self.bundlerSocket.close()
+        self.ventSocket.close()
+        # time.sleep(sleep)
 
     def map(self, foo, jobList):
         """Allows `ZMQProcessor` to be used as a drop-in replacement
@@ -168,6 +179,12 @@ def worker(lnpostfn, clientIP, ventPort, collectorPort, controlPort):
             if controlMessage == "QUIT":
                 # TODO check if lnppostfn has cleanup attribute
                 lnpostfn.cleanup()
+                workReceiver.setsockopt(zmq.LINGER, 0)
+                senderSocket.setsockopt(zmq.LINGER, 0)
+                controlReceiver.setsockopt(zmq.LINGER, 0)
+                workReceiver.close()
+                senderSocket.close()
+                controlReceiver.close()
                 break
 
 
@@ -198,6 +215,12 @@ def result_collector(collectorPort, wakePort, bundlerPort):
         if msg == "QUIT":
             print("result_collector shutting down")
             wakeSocket.send("result_collector shutting down")
+            collector.setsockopt(zmq.LINGER, 0)
+            wakeSocket.setsockopt(zmq.LINGER, 0)
+            bundlerSocket.setsockopt(zmq.LINGER, 0)
+            collector.close()
+            wakeSocket.close()
+            bundlerSocket.close()
             break
         else:
             nJobs = int(msg)
