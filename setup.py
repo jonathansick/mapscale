@@ -17,12 +17,12 @@ def read(fname):
 
 setup(
     name="MapScale",
-    version="0.0.1",
+    version="0.1.0",
     author="Jonathan Sick",
     author_email="jonathansick@mac.com",
     description="ZeroMQ-based replacement for multiprocessing's Pool.map()",
     long_description=read("README.markdown"),
     url="http://www.jonathansick.ca",
     packages=["mapscale"],
-    classifiers=["Development Status :: 2 - Pre-Alpha"]
+    classifiers=["Development Status :: 3 - Alpha"]
 )
