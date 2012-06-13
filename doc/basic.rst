@@ -1,5 +1,5 @@
-Basic Usage
-===========
+Getting Started
+===============
 
 Writing Work Functions
 ----------------------
