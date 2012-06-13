@@ -6,6 +6,12 @@
 MapScale
 ========
 
+MapScale is a Python tool for embarrassingly parallel python workflows.
+It works like Python's built-in `multiprocessing`_ `Pool.map()`, except MapScale uses `ZeroMQ`_ messaging to create work servers.
+This lets you reduce overhead--workers are setup just once, and can be re-used with several map calls--and allows you to add workers from across the Internet.
+
+MapScale is being developed at https://www.github.com/jonathansick/mapscale.
+
 Contents:
 
 .. toctree::
@@ -23,3 +29,5 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. _ZeroMQ: http://www.zeromq.org
+.. _multiprocessing: http://docs.python.org/library/multiprocessing.html#using-a-pool-of-workers
