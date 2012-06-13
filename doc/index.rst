@@ -11,8 +11,16 @@ It works like Python's built-in `multiprocessing`_ `Pool.map()`, except MapScale
 This lets you reduce overhead--workers are setup just once, and can be re-used with several map calls--and allows you to add workers from across the Internet.
 
 MapScale is being developed at https://www.github.com/jonathansick/mapscale.
+To install::
 
-Contents:
+    git clone https://github.com/jonathansick/mapscale.git
+    cd mapscale
+    python setup.py install
+
+Note, you will need to also install `pyzmq`_.
+
+Contents
+--------
 
 .. toctree::
    :maxdepth: 2
@@ -23,7 +31,7 @@ Contents:
 
 
 Indices and tables
-==================
+------------------
 
 * :ref:`genindex`
 * :ref:`modindex`
@@ -31,3 +39,4 @@ Indices and tables
 
 .. _ZeroMQ: http://www.zeromq.org
 .. _multiprocessing: http://docs.python.org/library/multiprocessing.html#using-a-pool-of-workers
+.. _pyzmq: http://zeromq.github.com/pyzmq/
