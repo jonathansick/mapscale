@@ -8,7 +8,7 @@ MapScale lives at https://github.com/jonathansick/mapscale
 
 ## Documentation
 
-One the web: [http://mapscale.jonathansick.ca](http://mapscale.jonathansick.ca).
+On the web: [http://mapscale.jonathansick.ca](http://mapscale.jonathansick.ca).
 
 On your computer:
 
@@ -17,16 +17,16 @@ On your computer:
 
 and documentation will be built in `build/sphinx/html`.
 
-## Development TODO List
+## Development
+
+Fork the [MapScale repo](http://www.github.com/jonathansick/mapscale) and send pull requests!
+
+### TODO List
 
 1. Add workers of the network, using TCP sockets in SSH tunnels.
    Currently, only local workers are supported.
 2. Make sure that workers have completed their startup sequence before we give them jobs.
    This will require an update to the socket architecture.
 3. Make MapScale robust to lost jobs and worker dropouts.
-   This will be particuarly useful once we add workers over the internet.
+   This will be particularly useful once we add workers over the Internet.
 4. Documentation, we need more of that.
-
-## Development
-
-Fork the [MapScale repo](http://www.github.com/jonathansick/mapscale) and send pull requests!
