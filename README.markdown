@@ -10,7 +10,11 @@ MapScale lives at https://github.com/jonathansick/mapscale
 
 On the web: [http://mapscale.jonathansick.ca](http://mapscale.jonathansick.ca).
 
-On your computer:
+You can also get [PDF](http://media.readthedocs.org/pdf/mapscale/latest/mapscale.pdf)
+and [EPUB](http://media.readthedocs.org/epub/mapscale/latest/mapscale.epub) versions.
+Thank you [Read the Docs](http://readthedocs.org/)!
+
+To build the documentation on your computer:
 
     cd *mapscale repo*
     python setup.py docs
