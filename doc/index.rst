@@ -27,6 +27,7 @@ Contents
    
    intro
    basic
+   arch
 
 
 
