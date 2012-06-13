@@ -2,4 +2,5 @@
 **tags
 **.DS_STORE
 *.egg-info
+doc/_build
 build
